@@ -1,0 +1,51 @@
+one:
+    id: 1
+    name: "Test component 1"
+    description: "Test component 1 description"
+    amount_id: 1
+    spares: false
+
+two:
+    id: 2
+    name: "Test component 3"
+    description: "Test component 3 description"
+    amount_id: 3
+    spares: false
+
+three:
+    id: 3
+    name: "Test component 6"
+    description: "Test component 6 description"
+    amount_id: 5
+    spares: false
+
+four:
+    id: 4
+    name: "Test component 5"
+    description: "Test component 5 description"
+    amount_id: 5
+    spares: true
+
+five:
+    id: 5
+    name: "Test component 4"
+    description: "Test component 4 description"
+    amount_id: 7
+    amount_value: 42
+    spares: false
+
+six:
+    id: 6
+    name: "Test component 2"
+    description: "Test component 2 description"
+    amount_id: 7
+    amount_value: 97
+    spares: false
+
+seven:
+    id: 7
+    name: "Test component 7"
+    description: "Test component 7 description"
+    amount_id: 7
+    amount_value: 107
+    spares: true

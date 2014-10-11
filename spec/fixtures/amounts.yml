@@ -1,0 +1,56 @@
+one:
+    id: 1
+    name: One
+    description: 
+    created_at: 2014-10-11 16:36:08.195064000 Z
+    updated_at: 2014-10-11 16:36:08.195064000 Z
+    can_have_spares: false
+    must_have_value: false
+few:
+    id: 2
+    name: Few
+    description: 
+    created_at: 2014-10-11 16:36:08.210227000 Z
+    updated_at: 2014-10-11 16:36:08.210227000 Z
+    can_have_spares: false
+    must_have_value: false
+some:
+    id: 3
+    name: Some
+    description: 
+    created_at: 2014-10-11 16:36:08.221652000 Z
+    updated_at: 2014-10-11 16:36:08.221652000 Z
+    can_have_spares: false
+    must_have_value: false
+several:
+    id: 4
+    name: Several
+    description: 
+    created_at: 2014-10-11 16:36:08.233941000 Z
+    updated_at: 2014-10-11 16:36:08.233941000 Z
+    can_have_spares: false
+    must_have_value: false
+lots:
+    id: 5
+    name: Lots
+    description: 
+    created_at: 2014-10-11 16:36:08.246917000 Z
+    updated_at: 2014-10-11 16:36:08.246917000 Z
+    can_have_spares: true
+    must_have_value: false
+overflow:
+    id: 6
+    name: Overflow
+    description: 
+    created_at: 2014-10-11 16:36:08.256903000 Z
+    updated_at: 2014-10-11 16:36:08.256903000 Z
+    can_have_spares: true
+    must_have_value: false
+fixed:
+    id: 7
+    name: Fixed
+    description: 
+    created_at: 2014-10-11 16:36:08.269258000 Z
+    updated_at: 2014-10-11 16:36:08.269258000 Z
+    can_have_spares: true
+    must_have_value: true
