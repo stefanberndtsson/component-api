@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe ComponentsController, :type => :controller do
   fixtures :amounts
   fixtures :components
+  fixtures :tags
   describe "get list" do
     it "should return first page of paginated list of components when not specifying page" do
       Component.per_page = 4
@@ -64,6 +65,18 @@ RSpec.describe ComponentsController, :type => :controller do
       expect(json).to have_key('meta')
       expect(json['meta']).to have_key('errors')
     end
+
+    it "should include an array of tag ids if present" do
+      component = Component.find(1)
+      component.component_tags.create(tag_id: 2)
+      component.component_tags.create(tag_id: 5)
+      component.component_tags.create(tag_id: 6)
+      get :show, id: 1
+      expect(json).to have_key('component')
+      expect(json['component']['name']).to eq("Test component 1")
+      expect(json['component']['tags'].count).to eq(3)
+      expect(json['component']['tags'].first).to eq(2)
+    end
   end
 
   describe "create component" do
@@ -95,6 +108,20 @@ RSpec.describe ComponentsController, :type => :controller do
       expect(json).to have_key('meta')
       expect(json['meta']).to have_key('errors')
       expect(Component.count).to eq(7)
+    end
+    
+    it "should accept a list of tags to save with component" do
+      post :create, { component: {
+          name: "New component",
+          description: "New component description",
+          amount_id: 1,
+          spares: false,
+          tags: [1, 2, 4]
+        }
+      }
+      component = Component.find(json['component']['id'])
+      expect(component.tags.first.name).to eq('Tag 1')
+      expect(component.tags.count).to eq(3)
     end
   end
 
@@ -145,6 +172,72 @@ RSpec.describe ComponentsController, :type => :controller do
       expect(json['meta']).to have_key('errors')
       expect(Component.count).to eq(7)
       expect(Component.find(1).name).to eq("Test component 1")
+    end
+
+    it "should accept a list of tags to save with component" do
+      put :update, { id: 1, component: {
+          name: "New component",
+          description: "New component description",
+          amount_id: 1,
+          spares: false,
+          tags: [1, 2, 4]
+        }
+      }
+      component = Component.find(json['component']['id'])
+      expect(component.tags.first.name).to eq('Tag 1')
+      expect(component.tags.count).to eq(3)
+    end
+
+    it "should accept a list of tags to save with component, replacing previous list" do
+      put :update, { id: 1, component: {
+          name: "New component",
+          description: "New component description",
+          amount_id: 1,
+          spares: false,
+          tags: [1, 2, 4]
+        }
+      }
+      component = Component.find(json['component']['id'])
+      expect(component.tags.first.name).to eq('Tag 1')
+      expect(component.tags.count).to eq(3)
+      @json = nil
+      put :update, { id: 1, component: {
+          name: "New component",
+          description: "New component description",
+          amount_id: 1,
+          spares: false,
+          tags: [2, 3, 5, 6]
+        }
+      }
+      component = Component.find(json['component']['id'])
+      expect(component.tags.first.name).to eq('Tag 2')
+      expect(component.tags.count).to eq(4)
+    end
+    
+    it "should accept a list of tags to save with component, replacing previous list, unless update fails" do
+      put :update, { id: 1, component: {
+          name: "New component",
+          description: "New component description",
+          amount_id: 1,
+          spares: false,
+          tags: [1, 2, 4]
+        }
+      }
+      component = Component.find(json['component']['id'])
+      expect(component.tags.first.name).to eq('Tag 1')
+      expect(component.tags.count).to eq(3)
+      @json = nil
+      put :update, { id: 1, component: {
+          name: "New component",
+          description: "New component description",
+          amount_id: 1,
+          spares: true,
+          tags: [2, 3, 5, 6]
+        }
+      }
+      component = Component.find(1)
+      expect(component.tags.first.name).to eq('Tag 1')
+      expect(component.tags.count).to eq(3)
     end
   end
 end

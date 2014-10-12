@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141011161012) do
+ActiveRecord::Schema.define(version: 20141012200658) do
 
   create_table "amounts", force: true do |t|
     t.text     "name"
@@ -22,6 +22,13 @@ ActiveRecord::Schema.define(version: 20141011161012) do
     t.boolean  "must_have_value"
   end
 
+  create_table "component_tags", force: true do |t|
+    t.integer  "component_id"
+    t.integer  "tag_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "components", force: true do |t|
     t.text     "name"
     t.text     "description"
@@ -30,6 +37,13 @@ ActiveRecord::Schema.define(version: 20141011161012) do
     t.boolean  "spares"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "tags", force: true do |t|
+    t.text     "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "norm"
   end
 
 end

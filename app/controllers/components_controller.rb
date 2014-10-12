@@ -24,6 +24,11 @@ class ComponentsController < ApplicationController
   
   def create
     @component = Component.new(params_permitted)
+    if params[:component][:tags]
+      params[:component][:tags].each do |tag_id|
+        @component.component_tags.build(tag_id: tag_id)
+      end
+    end
     if @component.save
       render json: {component: @component}
     else
@@ -35,7 +40,15 @@ class ComponentsController < ApplicationController
     @component = Component.find_by_id(params[:id])
     if @component.nil?
       render json: {meta: { errors: "Component #{params[:id]} not found"}}, status: 404
-    elsif @component.update_attributes(params_permitted)
+      return
+    end
+    
+    if params[:component][:tags]
+      @component.delete_tags = true
+      @component.add_tags = params[:component][:tags]
+    end
+    
+    if @component.update_attributes(params_permitted)
       render json: {component: @component}
     else
       render json: {meta: { errors: @component.errors }}, status: 422
