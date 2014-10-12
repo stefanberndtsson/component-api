@@ -1,6 +1,9 @@
 class ComponentsController < ApplicationController
   def index
     @components = Component.paginate(page: params[:page])
+    if @components.current_page > @components.total_pages
+      @components = Component.paginate(page: 1)
+    end
     @components = @components.order(:name)
     pagination = {}
     pagination[:pages] = @components.total_pages

@@ -30,6 +30,19 @@ RSpec.describe ComponentsController, :type => :controller do
       expect(json['meta']['pagination']['previous']).to eq(1)
     end
     
+    it "should return first page of paginated list of components when giving page beyond maximum page" do
+      Component.per_page = 4
+      get :index, page: 99999
+      expect(json).to have_key('components')
+      expect(json['components'].count).to eq(4)
+      expect(json).to have_key('meta')
+      expect(json['meta']).to have_key('pagination')
+      expect(json['meta']['pagination']['pages']).to eq((Component.count/4.0).ceil)
+      expect(json['meta']['pagination']['page']).to eq(1)
+      expect(json['meta']['pagination']['next']).to eq(2)
+      expect(json['meta']['pagination']['previous']).to eq(nil)
+    end
+    
     it "should return a list sorted by title by default" do
       Component.per_page = 4
       get :index
