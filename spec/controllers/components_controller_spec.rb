@@ -66,7 +66,7 @@ RSpec.describe ComponentsController, :type => :controller do
       expect(json['meta']).to have_key('errors')
     end
 
-    it "should include an array of tag ids if present" do
+    it "should include an array of tags if present" do
       component = Component.find(1)
       component.component_tags.create(tag_id: 2)
       component.component_tags.create(tag_id: 5)
@@ -75,7 +75,7 @@ RSpec.describe ComponentsController, :type => :controller do
       expect(json).to have_key('component')
       expect(json['component']['name']).to eq("Test component 1")
       expect(json['component']['tags'].count).to eq(3)
-      expect(json['component']['tags'].first).to eq(2)
+      expect(json['component']['tags'].first).to eq("Tag 2")
     end
   end
 
@@ -111,17 +111,19 @@ RSpec.describe ComponentsController, :type => :controller do
     end
     
     it "should accept a list of tags to save with component" do
+      expect(Tag.count).to eq(6)
       post :create, { component: {
           name: "New component",
           description: "New component description",
           amount_id: 1,
           spares: false,
-          tags: [1, 2, 4]
+          tags: ["tag 1", "Tag 2", "tag 4", "Tag 7"]
         }
       }
       component = Component.find(json['component']['id'])
       expect(component.tags.first.name).to eq('Tag 1')
-      expect(component.tags.count).to eq(3)
+      expect(component.tags.count).to eq(4)
+      expect(Tag.count).to eq(7)
     end
   end
 
@@ -180,7 +182,7 @@ RSpec.describe ComponentsController, :type => :controller do
           description: "New component description",
           amount_id: 1,
           spares: false,
-          tags: [1, 2, 4]
+          tags: ["tag 1", "Tag 2", "Tag 4"]
         }
       }
       component = Component.find(json['component']['id'])
@@ -194,7 +196,7 @@ RSpec.describe ComponentsController, :type => :controller do
           description: "New component description",
           amount_id: 1,
           spares: false,
-          tags: [1, 2, 4]
+          tags: ["tag 1", "Tag 2", "Tag 4"]
         }
       }
       component = Component.find(json['component']['id'])
@@ -206,7 +208,7 @@ RSpec.describe ComponentsController, :type => :controller do
           description: "New component description",
           amount_id: 1,
           spares: false,
-          tags: [2, 3, 5, 6]
+          tags: ["tag 2", "Tag 3", "tag 5", "Tag 6"]
         }
       }
       component = Component.find(json['component']['id'])
@@ -215,29 +217,32 @@ RSpec.describe ComponentsController, :type => :controller do
     end
     
     it "should accept a list of tags to save with component, replacing previous list, unless update fails" do
+      expect(Tag.count).to eq(6)
       put :update, { id: 1, component: {
           name: "New component",
           description: "New component description",
           amount_id: 1,
           spares: false,
-          tags: [1, 2, 4]
+          tags: ["tag 1", "Tag 2", "tag 4", "Tag 7"]
         }
       }
       component = Component.find(json['component']['id'])
       expect(component.tags.first.name).to eq('Tag 1')
-      expect(component.tags.count).to eq(3)
+      expect(component.tags.count).to eq(4)
+      expect(Tag.count).to eq(7)
       @json = nil
       put :update, { id: 1, component: {
           name: "New component",
           description: "New component description",
           amount_id: 1,
           spares: true,
-          tags: [2, 3, 5, 6]
+          tags: ["tag 2", "tag 3", "tag 5", "Tag 8", "Tag 9"]
         }
       }
       component = Component.find(1)
       expect(component.tags.first.name).to eq('Tag 1')
-      expect(component.tags.count).to eq(3)
+      expect(component.tags.count).to eq(4)
+      expect(Tag.count).to eq(7)
     end
   end
 end

@@ -9,9 +9,6 @@ class Tag < ActiveRecord::Base
   
   private
   def generate_normalized_name
-    return if self.name.nil? # Tested elsewhere
-    decomposed = Unicode.nfkd(self.name)
-    downcased = Unicode.downcase(decomposed)
-    self.norm = downcased
+    self.norm = self.name.norm
   end
 end

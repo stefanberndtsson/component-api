@@ -24,12 +24,12 @@ class ComponentsController < ApplicationController
   
   def create
     @component = Component.new(params_permitted)
-    if params[:component][:tags]
-      params[:component][:tags].each do |tag_id|
-        @component.component_tags.build(tag_id: tag_id)
-      end
-    end
     if @component.save
+      if params[:component][:tags]
+        params[:component][:tags].each do |tag_name|
+          @component.add_tag(tag_name)
+        end
+      end
       render json: {component: @component}
     else
       render json: {meta: { errors: @component.errors }}, status: 422
@@ -43,12 +43,14 @@ class ComponentsController < ApplicationController
       return
     end
     
-    if params[:component][:tags]
-      @component.delete_tags = true
-      @component.add_tags = params[:component][:tags]
-    end
-    
     if @component.update_attributes(params_permitted)
+      if params[:component][:tags]
+        @component.clear_tags
+        params[:component][:tags].each do |tag_name|
+          @component.add_tag(tag_name)
+        end
+      end
+    
       render json: {component: @component}
     else
       render json: {meta: { errors: @component.errors }}, status: 422

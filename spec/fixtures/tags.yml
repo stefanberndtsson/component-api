@@ -1,23 +1,29 @@
 one:
   id: 1
   name: "Tag 1"
+  norm: "tag 1"
 
 two:
   id: 2
   name: "Tag 2"
+  norm: "tag 2"
 
 three:
   id: 3
   name: "Tag 3"
+  norm: "tag 3"
 
 four:
   id: 4
   name: "Tag 4"
+  norm: "tag 4"
 
 five:
   id: 5
   name: "Tag 5"
+  norm: "tag 5"
 
 six:
   id: 6
   name: "Tag 6"
+  norm: "tag 6"
