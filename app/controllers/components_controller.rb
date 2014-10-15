@@ -32,7 +32,7 @@ class ComponentsController < ApplicationController
       end
       render json: {component: @component}
     else
-      render json: {meta: { errors: @component.errors }}, status: 422
+      render json: { errors: @component.errors }, status: 422
     end
   end
   
@@ -42,6 +42,8 @@ class ComponentsController < ApplicationController
       render json: {meta: { errors: "Component #{params[:id]} not found"}}, status: 404
       return
     end
+    
+    params[:component][:amount_id] = params[:component][:amount_code] if params[:component] && params[:component][:amount_code]
     
     if @component.update_attributes(params_permitted)
       if params[:component][:tags]
@@ -53,7 +55,7 @@ class ComponentsController < ApplicationController
     
       render json: {component: @component}
     else
-      render json: {meta: { errors: @component.errors }}, status: 422
+      render json: {errors: @component.errors }, status: 422
     end
   end
   
