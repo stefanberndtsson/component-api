@@ -105,8 +105,7 @@ RSpec.describe ComponentsController, :type => :controller do
         }
       }
       expect(response.status).to eq(422)
-      expect(json).to have_key('meta')
-      expect(json['meta']).to have_key('errors')
+      expect(json).to have_key('errors')
       expect(Component.count).to eq(7)
     end
     
@@ -154,8 +153,7 @@ RSpec.describe ComponentsController, :type => :controller do
         }
       }
       expect(response.status).to eq(422)
-      expect(json).to have_key('meta')
-      expect(json['meta']).to have_key('errors')
+      expect(json).to have_key('errors')
       expect(Component.count).to eq(7)
       expect(Component.find(1).name).to eq("Test component 1")
     end
