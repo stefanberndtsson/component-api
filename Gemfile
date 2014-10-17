@@ -45,3 +45,4 @@ end
 gem 'rack-cors', :require => 'rack/cors'
 gem 'will_paginate'
 gem 'unicode'
+gem 'bcrypt'
