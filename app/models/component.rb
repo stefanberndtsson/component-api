@@ -9,10 +9,7 @@ class Component < ActiveRecord::Base
   validate :must_have_amount_value
   
   def as_json(options = {})
-    tmp = super.merge({ tags: tags.map(&:name) })
-    tmp.delete("amount_id")
-    tmp[:amount_code] = self.amount_id
-    tmp
+    super.merge({ tags: tags.map(&:name) })
   end
 
   def add_tag(tag_name)

@@ -43,8 +43,6 @@ class ComponentsController < ApplicationController
       return
     end
     
-    params[:component][:amount_id] = params[:component][:amount_code] if params[:component] && params[:component][:amount_code]
-    
     if @component.update_attributes(params_permitted)
       if params[:component][:tags]
         @component.clear_tags
