@@ -1,4 +1,6 @@
 class ComponentsController < ApplicationController
+  before_filter :validate_token, only: [:create, :update]
+  
   def index
     @components = Component.paginate(page: params[:page])
     if @components.current_page > @components.total_pages

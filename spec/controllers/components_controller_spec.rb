@@ -4,6 +4,12 @@ RSpec.describe ComponentsController, :type => :controller do
   fixtures :amounts
   fixtures :components
   fixtures :tags
+  before :all do
+    user = User.new(username: "valid_username", password: "valid_password", name: "Valid User")
+    user.save
+    @user = User.find_by_username("valid_username")
+    @user.authenticate("valid_password")
+  end
   describe "get list" do
     it "should return first page of paginated list of components when not specifying page" do
       Component.per_page = 4
@@ -80,6 +86,17 @@ RSpec.describe ComponentsController, :type => :controller do
   end
 
   describe "create component" do
+    it "should require a valid token" do
+      post :create, { component: {
+          name: "New component",
+          description: "New component description",
+          amount_id: 1,
+          spares: false
+        }
+      }
+      expect(response.status).to eq(401)
+      expect(json['error']).to_not be_nil
+    end
     it "should save a new component" do
       expect(Component.count).to eq(7)
       post :create, { component: {
@@ -87,7 +104,8 @@ RSpec.describe ComponentsController, :type => :controller do
           description: "New component description",
           amount_id: 1,
           spares: false
-        }
+        },
+        token: @user.token
       }
       expect(json).to have_key('component')
       expect(json['component']['name']).to eq('New component')
@@ -102,7 +120,8 @@ RSpec.describe ComponentsController, :type => :controller do
           description: "New component description",
           amount_id: 1,
           spares: true
-        }
+        },
+        token: @user.token
       }
       expect(response.status).to eq(422)
       expect(json).to have_key('errors')
@@ -117,7 +136,8 @@ RSpec.describe ComponentsController, :type => :controller do
           amount_id: 1,
           spares: false,
           tags: ["tag 1", "Tag 2", "tag 4", "Tag 7"]
-        }
+        },
+        token: @user.token
       }
       component = Component.find(json['component']['id'])
       expect(component.tags.first.name).to eq('Tag 1')
@@ -127,6 +147,17 @@ RSpec.describe ComponentsController, :type => :controller do
   end
 
   describe "update component" do
+    it "should require a valid token" do
+      put :update, { id: 1, component: {
+          name: "New component name",
+          description: "New component description",
+          amount_id: 1,
+          spares: false
+        }
+      }
+      expect(response.status).to eq(401)
+      expect(json['error']).to_not be_nil
+    end
     it "should save an updated component" do
       expect(Component.find(1).name).to eq("Test component 1")
       put :update, { id: 1, component: {
@@ -134,7 +165,8 @@ RSpec.describe ComponentsController, :type => :controller do
           description: "New component description",
           amount_id: 1,
           spares: false
-        }
+        },
+        token: @user.token
       }
       expect(json).to have_key('component')
       expect(json['component']['name']).to eq('New component name')
@@ -150,7 +182,8 @@ RSpec.describe ComponentsController, :type => :controller do
           description: "New component description",
           amount_id: 1,
           spares: true
-        }
+        },
+        token: @user.token
       }
       expect(response.status).to eq(422)
       expect(json).to have_key('errors')
@@ -165,7 +198,8 @@ RSpec.describe ComponentsController, :type => :controller do
           description: "New component description",
           amount_id: 1,
           spares: true
-        }
+        },
+        token: @user.token
       }
       expect(response.status).to eq(404)
       expect(json).to have_key('meta')
@@ -181,7 +215,8 @@ RSpec.describe ComponentsController, :type => :controller do
           amount_id: 1,
           spares: false,
           tags: ["tag 1", "Tag 2", "Tag 4"]
-        }
+        },
+        token: @user.token
       }
       component = Component.find(json['component']['id'])
       expect(component.tags.first.name).to eq('Tag 1')
@@ -195,7 +230,8 @@ RSpec.describe ComponentsController, :type => :controller do
           amount_id: 1,
           spares: false,
           tags: ["tag 1", "Tag 2", "Tag 4"]
-        }
+        },
+        token: @user.token
       }
       component = Component.find(json['component']['id'])
       expect(component.tags.first.name).to eq('Tag 1')
@@ -207,7 +243,8 @@ RSpec.describe ComponentsController, :type => :controller do
           amount_id: 1,
           spares: false,
           tags: ["tag 2", "Tag 3", "tag 5", "Tag 6"]
-        }
+        },
+        token: @user.token
       }
       component = Component.find(json['component']['id'])
       expect(component.tags.first.name).to eq('Tag 2')
@@ -222,7 +259,8 @@ RSpec.describe ComponentsController, :type => :controller do
           amount_id: 1,
           spares: false,
           tags: ["tag 1", "Tag 2", "tag 4", "Tag 7"]
-        }
+        },
+        token: @user.token
       }
       component = Component.find(json['component']['id'])
       expect(component.tags.first.name).to eq('Tag 1')
@@ -235,7 +273,8 @@ RSpec.describe ComponentsController, :type => :controller do
           amount_id: 1,
           spares: true,
           tags: ["tag 2", "tag 3", "tag 5", "Tag 8", "Tag 9"]
-        }
+        },
+        token: @user.token
       }
       component = Component.find(1)
       expect(component.tags.first.name).to eq('Tag 1')
