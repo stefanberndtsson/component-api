@@ -83,6 +83,29 @@ RSpec.describe ComponentsController, :type => :controller do
       expect(json['component']['tags'].count).to eq(3)
       expect(json['component']['tags'].first).to eq("Tag 2")
     end
+
+    it "should have tags sorted" do
+      component = Component.find(1)
+      component.component_tags.create(tag_id: 2)
+      component.component_tags.create(tag_id: 5)
+      component.component_tags.create(tag_id: 6)
+      get :show, id: 1
+      expect(json).to have_key('component')
+      expect(json['component']['name']).to eq("Test component 1")
+      expect(json['component']['tags'].count).to eq(3)
+      expect(json['component']['tags'].first).to eq("Tag 2")
+
+      component = Component.find(2)
+      component.component_tags.create(tag_id: 6)
+      component.component_tags.create(tag_id: 4)
+      component.component_tags.create(tag_id: 3)
+      get :show, id: 2
+      expect(json).to have_key('component')
+      expect(json['component']['name']).to eq("Test component 3")
+      expect(json['component']['tags'].count).to eq(3)
+      expect(json['component']['tags'].first).to eq("Tag 3")
+    end
+ 
   end
 
   describe "create component" do
