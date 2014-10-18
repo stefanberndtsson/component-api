@@ -33,6 +33,13 @@ class User < ActiveRecord::Base
     end
     provided_token == self.token
   end
+
+  def as_json(options = {})
+    {
+      username: username,
+      name: name
+    }
+  end
   
   private
   def encrypt_password

@@ -18,5 +18,16 @@ RSpec.describe SessionController, :type => :controller do
       expect(response.status).to eq(401)
       expect(json['error']).to be_truthy
     end
+    
+    it "should return user data on valid credentials" do
+      post :create, username: "valid_user", password: "valid_password"
+      user = User.find_by_username("valid_user")
+      expect(json['user']['name']).to eq(user.name)
+    end
+
+    it "should not return user password hash on valid credentials" do
+      post :create, username: "valid_user", password: "valid_password"
+      expect(json['user']).to_not have_key('password')
+    end
   end
 end
