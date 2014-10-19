@@ -9,6 +9,7 @@ class SearchesController < ApplicationController
       else
         @results = tmp
       end
+      @results = @results.order(:name)
       pagination[:pages] = @results.total_pages
       pagination[:page] = @results.current_page
       pagination[:next] = @results.next_page

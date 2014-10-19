@@ -27,6 +27,15 @@ RSpec.describe SearchesController, :type => :controller do
       expect(json['results'].count).to eq(1)
     end
 
+    it "should return sorted list" do
+      get :index, query: "test"
+      expect(json['results']).to_not be_empty
+      expect(json['results'].count).to eq(7)
+      expect(json['results'][0]['name']).to eq('Test component 1')
+      expect(json['results'][1]['name']).to eq('Test component 2')
+      expect(json['results'][2]['name']).to eq('Test component 3')
+    end
+
     it "should treat query as case insensitive" do
       get :index, query: "Test"
       expect(json['results']).to_not be_empty
