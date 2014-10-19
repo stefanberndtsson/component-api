@@ -24,6 +24,17 @@ class Component < ActiveRecord::Base
     component_tags.delete_all
   end
   
+  def self.search(query)
+    return [] if query.blank?
+    result = Component.all
+    name_result = result.where("lower(name) LIKE ?", "%#{query.downcase}%").pluck(:id)
+    description_result = result.where("lower(description) LIKE ?", "%#{query.downcase}%").pluck(:id)
+    matching_tags = Tag.select(:id).where(norm: query)
+    tag_result = ComponentTag.where(tag_id: matching_tags).pluck(:component_id)
+    combined_result = name_result + description_result + tag_result
+    result.where(id: combined_result.uniq)
+  end
+  
   private
   def spares_allowed
     errors.add(:spares, "not allowed for low value amounts") if spares && !amount.can_have_spares
