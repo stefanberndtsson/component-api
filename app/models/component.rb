@@ -2,6 +2,7 @@ class Component < ActiveRecord::Base
   belongs_to :amount
   has_many :component_tags
   has_many :tags, :through => :component_tags
+  has_many :asset_data, class: AssetData
 
   validates_presence_of :name
   validates_presence_of :amount_id

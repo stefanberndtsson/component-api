@@ -1,0 +1,2 @@
+module AssetDataHelper
+end

@@ -1,0 +1,19 @@
+one:
+  id: 1
+  name: "Datasheet"
+  dir: "datasheet"
+
+two:
+  id: 2
+  name: "Document"
+  dir: "document"
+
+three:
+  id: 3
+  name: "Image"
+  dir: "image"
+
+four:
+  id: 4
+  name: "Link"
+  dir: "link"

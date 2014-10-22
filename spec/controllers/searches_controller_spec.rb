@@ -9,6 +9,7 @@ RSpec.describe SearchesController, :type => :controller do
                             spares: false)
     test.add_tag("Long")
     test.add_tag("Long tag name")
+    Component.per_page = 10000
   end
 
   describe "search data" do

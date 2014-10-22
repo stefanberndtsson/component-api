@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   resources :tags
   resources :session
   resources :searches
+  resources :asset_data
   get 'results' => 'searches#index'
   
   # The priority is based upon order of creation: first created -> highest priority.

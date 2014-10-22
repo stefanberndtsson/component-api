@@ -1,4 +1,6 @@
 class User < ActiveRecord::Base
+  DEFAULT_TOKEN_EXPIRE = 1.day
+  
   validates_presence_of :username
   validates_uniqueness_of :username
   validates_presence_of :password
@@ -18,7 +20,7 @@ class User < ActiveRecord::Base
   def generate_token
     update_attributes({
                         token: SecureRandom.hex,
-                        token_expire: Time.now + 1.day
+                        token_expire: Time.now + DEFAULT_TOKEN_EXPIRE
                       })
   end
   
@@ -31,6 +33,7 @@ class User < ActiveRecord::Base
       clear_token
       return false
     end
+    update_attribute(:token_expire, Time.now + DEFAULT_TOKEN_EXPIRE)
     provided_token == self.token
   end
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141017213814) do
+ActiveRecord::Schema.define(version: 20141022210828) do
 
   create_table "amounts", force: true do |t|
     t.text     "name"
@@ -20,6 +20,23 @@ ActiveRecord::Schema.define(version: 20141017213814) do
     t.datetime "updated_at"
     t.boolean  "can_have_spares"
     t.boolean  "must_have_value"
+  end
+
+  create_table "asset_data", force: true do |t|
+    t.integer  "asset_data_type_id"
+    t.text     "name"
+    t.text     "path"
+    t.integer  "component_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "content_type"
+  end
+
+  create_table "asset_data_types", force: true do |t|
+    t.text     "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "dir"
   end
 
   create_table "component_tags", force: true do |t|
