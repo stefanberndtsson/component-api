@@ -1,4 +1,5 @@
 class Component < ActiveRecord::Base
+  ASSET_FILES=["Datasheet", "Document", "Image"]
   belongs_to :amount
   has_many :component_tags
   has_many :tags, :through => :component_tags
@@ -10,9 +11,24 @@ class Component < ActiveRecord::Base
   validate :must_have_amount_value
   
   def as_json(options = {})
-    super.merge({ tags: tags.map(&:name).sort_by(&:norm) })
+    data = {
+      tags: tags.map(&:name).sort_by(&:norm),
+      files: files
+    }
+    super.merge(data)
   end
 
+  def files
+    file_grouped = {}
+    asset_data.each do |data|
+      next if !ASSET_FILES.include?(data.asset_data_type.name)
+      file_group = data.asset_data_type.name.tableize
+      file_grouped[file_group] ||= []
+      file_grouped[file_group] << data
+    end
+    file_grouped
+  end
+  
   def add_tag(tag_name)
     tag = Tag.find_by_norm(tag_name.norm)
     if !tag

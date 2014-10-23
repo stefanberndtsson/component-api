@@ -105,7 +105,24 @@ RSpec.describe ComponentsController, :type => :controller do
       expect(json['component']['tags'].count).to eq(3)
       expect(json['component']['tags'].first).to eq("Tag 3")
     end
- 
+
+    it "should include files if available" do
+      comp = Component.find(1)
+      comp.asset_data.create(name: "Testfile Datasheet 1",
+                             asset_data_type_id: AssetDataType.find_by_name("Datasheet").id)
+      comp.asset_data.create(name: "Testfile Datasheet 2",
+                             asset_data_type_id: AssetDataType.find_by_name("Datasheet").id)
+      comp.asset_data.create(name: "Testfile Document 3",
+                             asset_data_type_id: AssetDataType.find_by_name("Document").id)
+      comp.asset_data.create(name: "Testfile Image 1",
+                             asset_data_type_id: AssetDataType.find_by_name("Image").id)
+      get :show, id: 1
+      expect(json['component']).to have_key("files")
+      expect(json['component']['files']).to_not be_empty
+      expect(json['component']['files']).to have_key("datasheets")
+      expect(json['component']['files']).to have_key("documents")
+      expect(json['component']['files']).to have_key("images")
+    end
   end
 
   describe "create component" do
