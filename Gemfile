@@ -46,3 +46,4 @@ gem 'rack-cors', :require => 'rack/cors'
 gem 'will_paginate'
 gem 'unicode'
 gem 'bcrypt'
+gem "mini_magick", "~> 4.0.0.rc"

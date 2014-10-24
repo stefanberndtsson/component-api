@@ -31,7 +31,21 @@ class AssetDataController < ApplicationController
     dir_path = "#{upload_root}/#{asset.upload_dir}"
     file_path = "#{dir_path}/#{asset.name}"
     if File.exist?(file_path)
-      send_file file_path, filename: asset.name, type: asset.content_type
+      send_file file_path, filename: asset.name, type: asset.content_type, disposition: 'inline'
+    end
+  end
+  
+  def thumbnail
+    asset = AssetData.find(params[:id])
+    size = params[:size].to_i
+    upload_root = Rails.configuration.upload_root
+    dir_path = "#{upload_root}/#{asset.upload_dir}"
+    file_path = "#{dir_path}/#{asset.name}"
+    if File.exist?(file_path)
+      image = MiniMagick::Image.open(file_path)
+      image.resize "#{size}x#{size}"
+      image.format "png"
+      send_data image.to_blob, type: 'image/png', disposition: 'inline'
     end
   end
 end

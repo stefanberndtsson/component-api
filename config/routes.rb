@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   resources :searches
   resources :asset_data
   get 'results' => 'searches#index'
+  get 'asset_data/thumbnail/:id' => 'asset_data#thumbnail'
   
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

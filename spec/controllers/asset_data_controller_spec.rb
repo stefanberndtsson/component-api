@@ -58,4 +58,14 @@ RSpec.describe AssetDataController, :type => :controller do
       expect(response.content_type).to eq(testpdf.content_type)
     end
   end
+
+  describe "get thumbnail" do
+    it "should return thumbnail when given id" do
+      post :create, component_id: @component.id, data_type: "Datasheet", file: @testimg, token: @user.token
+      component = Component.find(@component.id)
+      get :thumbnail, id: component.asset_data.first.id, size: 320
+      image = MiniMagick::Image.read(StringIO.new(response.body))
+      expect(image.width).to be <= 320
+    end
+  end
 end
