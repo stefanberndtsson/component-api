@@ -24,4 +24,14 @@ class AssetDataController < ApplicationController
     end
     render json: {}
   end
+  
+  def show
+    asset = AssetData.find(params[:id])
+    upload_root = Rails.configuration.upload_root
+    dir_path = "#{upload_root}/#{asset.upload_dir}"
+    file_path = "#{dir_path}/#{asset.name}"
+    if File.exist?(file_path)
+      send_file file_path, filename: asset.name, type: asset.content_type
+    end
+  end
 end

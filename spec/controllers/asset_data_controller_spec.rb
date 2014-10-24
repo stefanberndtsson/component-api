@@ -47,4 +47,15 @@ RSpec.describe AssetDataController, :type => :controller do
       expect(assets.first.content_type).to eq("application/pdf")
     end
   end
+  
+  describe "get asset" do
+    it "should return the file when given id" do
+      post :create, component_id: @component.id, data_type: "Datasheet", file: @testpdf, token: @user.token
+      component = Component.find(@component.id)
+      get :show, id: component.asset_data.first.id
+      testpdf = fixture_file_upload('files/Testfile.pdf', 'application/pdf')
+      expect(Digest::SHA1.hexdigest(response.body)).to eq(Digest::SHA1.hexdigest(testpdf.read))
+      expect(response.content_type).to eq(testpdf.content_type)
+    end
+  end
 end
