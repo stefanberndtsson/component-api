@@ -44,6 +44,7 @@ RSpec.describe AssetDataController, :type => :controller do
       assets = component.asset_data
       expect(assets.count).to eq(1)
       expect(File.exist?("#{@upload_root}/#{assets.first.upload_dir}/Testfile.pdf")).to be_truthy
+      expect(assets.first.content_type).to eq("application/pdf")
     end
   end
 end
