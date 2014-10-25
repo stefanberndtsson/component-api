@@ -17,7 +17,7 @@ class AssetData < ActiveRecord::Base
     upload_root = Rails.configuration.upload_root
     dir_path = "#{upload_root}/#{upload_dir}"
     thumbnail_path = "#{upload_root}/#{thumbnail_dir}"
-    thumbnail_name = Pathname.new(name).sub_ext(".png")
+    thumbnail_name = name+".png"
     thumbnail_file_path = "#{thumbnail_path}/#{size}_#{thumbnail_name}"
     file_path = "#{dir_path}/#{name}"
     

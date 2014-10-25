@@ -55,7 +55,7 @@ class AssetDataController < ApplicationController
     end
     thumbnail_dir = "#{upload_root}/#{asset_data.thumbnail_dir}"
     if Dir.exist?(thumbnail_dir)
-      thumbnail_match_name = Pathname.new(asset_data.name).sub_ext(".png").to_s
+      thumbnail_match_name = asset_data.name+".png"
       Pathname.new(thumbnail_dir).children.each do |child|
         thumbname = child.basename.to_s[/^\d+_(.*)$/,1]
         FileUtils.rm(child) if thumbname == thumbnail_match_name

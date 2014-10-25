@@ -94,10 +94,10 @@ RSpec.describe AssetDataController, :type => :controller do
       get :thumbnail, id: assets.last.id, size: 320
       get :thumbnail, id: assets.last.id, size: 160
       delete :destroy, id: assets.first.id, token: @user.token
-      expect(File.exist?("#{@upload_root}/#{thumbnail_dir}/320_Testfile.png")).to be_falsey
-      expect(File.exist?("#{@upload_root}/#{thumbnail_dir}/160_Testfile.png")).to be_falsey
-      expect(File.exist?("#{@upload_root}/#{thumbnail_dir}/320_Other.png")).to be_truthy
-      expect(File.exist?("#{@upload_root}/#{thumbnail_dir}/160_Other.png")).to be_truthy
+      expect(File.exist?("#{@upload_root}/#{thumbnail_dir}/320_Testfile.pdf.png")).to be_falsey
+      expect(File.exist?("#{@upload_root}/#{thumbnail_dir}/160_Testfile.pdf.png")).to be_falsey
+      expect(File.exist?("#{@upload_root}/#{thumbnail_dir}/320_Other.jpg.png")).to be_truthy
+      expect(File.exist?("#{@upload_root}/#{thumbnail_dir}/160_Other.jpg.png")).to be_truthy
     end
   end
   
@@ -125,7 +125,7 @@ RSpec.describe AssetDataController, :type => :controller do
       post :create, component_id: @component.id, data_type: "Datasheet", file: @testimg, token: @user.token
       component = Component.find(@component.id)
       size = 320
-      name = Pathname.new(@testimg.original_filename).sub_ext(".png")
+      name = @testimg.original_filename+".png"
       get :thumbnail, id: component.asset_data.first.id, size: size
       expect(File.exist?("#{@upload_root}/#{component.asset_data.first.thumbnail_dir}/#{size}_#{name}")).to be_truthy
       get :thumbnail, id: component.asset_data.first.id, size: size
