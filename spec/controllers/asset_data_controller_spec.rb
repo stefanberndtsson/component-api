@@ -20,6 +20,7 @@ RSpec.describe AssetDataController, :type => :controller do
     @testpdf = fixture_file_upload('files/Testfile.pdf', 'application/pdf')
     @testdoc = fixture_file_upload('files/Testfile.odt', 'application/vnd.oasis.opendocument.text')
     @testimg = fixture_file_upload('files/Testfile.jpg', 'image/jpeg')
+    @testimg2 = fixture_file_upload('files/Other.jpg', 'image/jpeg')
     user = User.new(username: "valid_username", password: "valid_password", name: "Valid User")
     user.save
     @user = User.find_by_username("valid_username")
@@ -45,6 +46,58 @@ RSpec.describe AssetDataController, :type => :controller do
       expect(assets.count).to eq(1)
       expect(File.exist?("#{@upload_root}/#{assets.first.upload_dir}/Testfile.pdf")).to be_truthy
       expect(assets.first.content_type).to eq("application/pdf")
+    end
+  end
+
+  describe "remove asset" do
+    it "should require valid token" do
+      post :create, component_id: @component.id, data_type: "Datasheet", file: @testpdf, token: @user.token
+      component = Component.find(1)
+      assets = component.asset_data
+      delete :destroy, id: assets.first.id
+      expect(response.status).to eq(401)
+      expect(json['error']).to_not be_nil
+    end
+
+    it "should remove asset from database" do
+      post :create, component_id: @component.id, data_type: "Datasheet", file: @testpdf, token: @user.token
+      expect(response.status).to eq(200)
+      component = Component.find(1)
+      assets = component.asset_data
+      expect(assets.count).to eq(1)
+      delete :destroy, id: assets.first.id, token: @user.token
+      component = Component.find(1)
+      assets = component.asset_data
+      expect(assets.count).to eq(0)
+    end
+
+    it "should remove asset file from filesystem" do
+      post :create, component_id: @component.id, data_type: "Datasheet", file: @testpdf, token: @user.token
+      expect(response.status).to eq(200)
+      component = Component.find(1)
+      assets = component.asset_data
+      upload_dir = assets.first.upload_dir
+      delete :destroy, id: assets.first.id, token: @user.token
+      expect(File.exist?("#{@upload_root}/#{upload_dir}/Testfile.pdf")).to be_falsey
+    end
+
+    it "should remove thumbnail files from filesystem" do
+      post :create, component_id: @component.id, data_type: "Datasheet", file: @testpdf, token: @user.token
+      expect(response.status).to eq(200)
+      post :create, component_id: @component.id, data_type: "Datasheet", file: @testimg2, token: @user.token
+      expect(response.status).to eq(200)
+      component = Component.find(1)
+      assets = component.asset_data
+      thumbnail_dir = assets.first.thumbnail_dir
+      get :thumbnail, id: assets.first.id, size: 320
+      get :thumbnail, id: assets.first.id, size: 160
+      get :thumbnail, id: assets.last.id, size: 320
+      get :thumbnail, id: assets.last.id, size: 160
+      delete :destroy, id: assets.first.id, token: @user.token
+      expect(File.exist?("#{@upload_root}/#{thumbnail_dir}/320_Testfile.png")).to be_falsey
+      expect(File.exist?("#{@upload_root}/#{thumbnail_dir}/160_Testfile.png")).to be_falsey
+      expect(File.exist?("#{@upload_root}/#{thumbnail_dir}/320_Other.png")).to be_truthy
+      expect(File.exist?("#{@upload_root}/#{thumbnail_dir}/160_Other.png")).to be_truthy
     end
   end
   

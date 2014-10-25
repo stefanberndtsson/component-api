@@ -1,5 +1,5 @@
 class AssetDataController < ApplicationController
-  before_filter :validate_token, only: [:create]
+  before_filter :validate_token, only: [:create, :destroy]
   
   def create
     infile = params[:file]
@@ -42,5 +42,25 @@ class AssetDataController < ApplicationController
     if thumbnail_file_path
       send_file thumbnail_file_path, type: 'image/png', disposition: 'inline'
     end
+  end
+
+  def destroy
+    asset_data = AssetData.find(params[:id])
+    asset_data.destroy
+    upload_root = Rails.configuration.upload_root
+    dir_path = "#{upload_root}/#{asset_data.upload_dir}"
+    file_path = "#{dir_path}/#{asset_data.name}"
+    if File.exist?(file_path)
+      FileUtils.rm(file_path)
+    end
+    thumbnail_dir = "#{upload_root}/#{asset_data.thumbnail_dir}"
+    if Dir.exist?(thumbnail_dir)
+      thumbnail_match_name = Pathname.new(asset_data.name).sub_ext(".png").to_s
+      Pathname.new(thumbnail_dir).children.each do |child|
+        thumbname = child.basename.to_s[/^\d+_(.*)$/,1]
+        FileUtils.rm(child) if thumbname == thumbnail_match_name
+      end
+    end
+    render json: {}
   end
 end
