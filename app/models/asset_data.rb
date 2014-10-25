@@ -24,11 +24,11 @@ class AssetData < ActiveRecord::Base
     return thumbnail_file_path if File.exist?(thumbnail_file_path)
     return nil if !File.exist?(file_path)
 
-    image = MiniMagick::Image.open(file_path)
-    image.resize "#{size}x#{size}"
-    image.format "png"
     FileUtils.mkdir_p(thumbnail_path)
-    image.write thumbnail_file_path
+    cmd = ["convert", "-resize", "#{size}x#{size}", file_path+"[0]", thumbnail_file_path]
+    IO.popen(cmd) do |stdout|
+      stdout.read
+    end
     
     return thumbnail_file_path
   end

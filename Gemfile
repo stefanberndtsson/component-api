@@ -40,10 +40,10 @@ gem 'spring',        group: :development
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.0.0'
+  gem "mini_magick", "~> 4.0.0.rc"
 end
 
 gem 'rack-cors', :require => 'rack/cors'
 gem 'will_paginate'
 gem 'unicode'
 gem 'bcrypt'
-gem "mini_magick", "~> 4.0.0.rc"
