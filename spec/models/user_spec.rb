@@ -64,7 +64,7 @@ RSpec.describe User, :type => :model do
     expect(user.token).to be_nil
     expect(user.authenticate("foobar")).to be_truthy
     expect(user.token).to_not be_nil
-    expect(user.token_expire).to be_within(1.day).of(Time.now)
+    expect(user.token_expire).to be_within(1.day+2.hours).of(Time.now)
   end
 
   it "should not generate token on failed authentication" do
@@ -89,7 +89,7 @@ RSpec.describe User, :type => :model do
     expect(user.authenticate("foobar")).to be_truthy
     token = user.token
     expect(user.validate_token(token)).to be_truthy
-    expect(user.token_expire).to be_within(1.day).of(Time.now)
+    expect(user.token_expire).to be_within(1.day+2.hours).of(Time.now)
     user.token_expire = Time.now - 1.day
     expect(user.token_expire).to_not be_within(1.day).of(Time.now)
     expect(user.validate_token(token)).to be_falsey
