@@ -1,5 +1,6 @@
 class Component < ActiveRecord::Base
   ASSET_FILES=["Datasheet", "Document", "Image"]
+  Component.per_page = 15
   belongs_to :amount
   has_many :component_tags
   has_many :tags, :through => :component_tags
