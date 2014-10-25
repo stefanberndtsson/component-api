@@ -44,12 +44,22 @@ class Component < ActiveRecord::Base
   def self.search(query)
     return [] if query.blank?
     result = Component.all
-    name_result = result.where("lower(name) LIKE ?", "%#{query.downcase}%").pluck(:id)
-    description_result = result.where("lower(description) LIKE ?", "%#{query.downcase}%").pluck(:id)
-    matching_tags = Tag.select(:id).where(norm: query)
-    tag_result = ComponentTag.where(tag_id: matching_tags).pluck(:component_id)
-    combined_result = name_result + description_result + tag_result
-    result.where(id: combined_result.uniq)
+    if query[/^special:with-(.*)/]
+      asset_type = $1
+      if asset_type == "file"
+        result.joins(:asset_data).where(asset_data: { component_id: Component.pluck(:id) } ).distinct
+      else
+        adt = AssetDataType.find_by_name(asset_type.capitalize)
+        result.joins(:asset_data).where(asset_data: { asset_data_type_id: adt.id }).distinct
+      end
+    else
+      name_result = result.where("lower(name) LIKE ?", "%#{query.downcase}%").pluck(:id)
+      description_result = result.where("lower(description) LIKE ?", "%#{query.downcase}%").pluck(:id)
+      matching_tags = Tag.select(:id).where(norm: query)
+      tag_result = ComponentTag.where(tag_id: matching_tags).pluck(:component_id)
+      combined_result = name_result + description_result + tag_result
+      result.where(id: combined_result.uniq)
+    end
   end
   
   private

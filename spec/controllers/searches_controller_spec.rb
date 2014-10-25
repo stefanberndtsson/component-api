@@ -105,4 +105,51 @@ RSpec.describe SearchesController, :type => :controller do
       expect(json['meta']['pagination']['previous']).to eq(nil)
     end
   end
+  
+  describe "special query" do
+    before :each do
+      adt = AssetDataType.find_by_name("Datasheet")
+      AssetData.create(asset_data_type_id: adt.id,
+                       component_id: 1,
+                       name: "Datasheet_1.pdf", content_type: 'application/pdf')
+      AssetData.create(asset_data_type_id: adt.id,
+                       component_id: 2,
+                       name: "Datasheet_2.pdf", content_type: 'application/pdf')
+      adt = AssetDataType.find_by_name("Document")
+      AssetData.create(asset_data_type_id: adt.id,
+                       component_id: 2,
+                       name: "Document_1.pdf", content_type: 'application/pdf')
+      adt = AssetDataType.find_by_name("Image")
+      AssetData.create(asset_data_type_id: adt.id,
+                       component_id: 2,
+                       name: "Image_1.jpg", content_type: 'application/pdf')
+      AssetData.create(asset_data_type_id: adt.id,
+                       component_id: 3,
+                       name: "Image_2.jpg", content_type: 'application/pdf')
+    end
+    
+    it "should return only components with datasheets when searching for special:with-datasheet" do
+      get :index, query: "special:with-datasheet"
+      expect(json['results']).to_not be_empty
+      expect(json['results'].count).to eq(2)
+    end
+    
+    it "should return only components with documents when searching for special:with-document" do
+      get :index, query: "special:with-document"
+      expect(json['results']).to_not be_empty
+      expect(json['results'].count).to eq(1)
+    end
+
+    it "should return only components with images when searching for special:with-image" do
+      get :index, query: "special:with-image"
+      expect(json['results']).to_not be_empty
+      expect(json['results'].count).to eq(2)
+    end
+
+    it "should return only components with files when searching for special:with-file" do
+      get :index, query: "special:with-file"
+      expect(json['results']).to_not be_empty
+      expect(json['results'].count).to eq(3)
+    end
+  end
 end
