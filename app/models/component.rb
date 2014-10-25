@@ -52,6 +52,14 @@ class Component < ActiveRecord::Base
         adt = AssetDataType.find_by_name(asset_type.capitalize)
         result.joins(:asset_data).where(asset_data: { asset_data_type_id: adt.id }).distinct
       end
+    elsif query[/^special:without-(.*)/]
+      asset_type = $1
+      if asset_type == "file"
+        result.where("id NOT IN (?)", AssetData.select(:component_id))
+      else
+        adt = AssetDataType.find_by_name(asset_type.capitalize)
+        result.where("id NOT IN (?)", AssetData.where(asset_data_type_id: adt.id).select(:component_id))
+      end
     else
       name_result = result.where("lower(name) LIKE ?", "%#{query.downcase}%").pluck(:id)
       description_result = result.where("lower(description) LIKE ?", "%#{query.downcase}%").pluck(:id)

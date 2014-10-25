@@ -127,29 +127,57 @@ RSpec.describe SearchesController, :type => :controller do
                        component_id: 3,
                        name: "Image_2.jpg", content_type: 'application/pdf')
     end
-    
-    it "should return only components with datasheets when searching for special:with-datasheet" do
-      get :index, query: "special:with-datasheet"
-      expect(json['results']).to_not be_empty
-      expect(json['results'].count).to eq(2)
-    end
-    
-    it "should return only components with documents when searching for special:with-document" do
-      get :index, query: "special:with-document"
-      expect(json['results']).to_not be_empty
-      expect(json['results'].count).to eq(1)
-    end
+  
+    describe "with asset" do
+      it "should return only components with datasheets when searching for special:with-datasheet" do
+        get :index, query: "special:with-datasheet"
+        expect(json['results']).to_not be_empty
+        expect(json['results'].count).to eq(2)
+      end
+      
+      it "should return only components with documents when searching for special:with-document" do
+        get :index, query: "special:with-document"
+        expect(json['results']).to_not be_empty
+        expect(json['results'].count).to eq(1)
+      end
 
-    it "should return only components with images when searching for special:with-image" do
-      get :index, query: "special:with-image"
-      expect(json['results']).to_not be_empty
-      expect(json['results'].count).to eq(2)
-    end
+      it "should return only components with images when searching for special:with-image" do
+        get :index, query: "special:with-image"
+        expect(json['results']).to_not be_empty
+        expect(json['results'].count).to eq(2)
+      end
 
-    it "should return only components with files when searching for special:with-file" do
-      get :index, query: "special:with-file"
-      expect(json['results']).to_not be_empty
-      expect(json['results'].count).to eq(3)
+      it "should return only components with files when searching for special:with-file" do
+        get :index, query: "special:with-file"
+        expect(json['results']).to_not be_empty
+        expect(json['results'].count).to eq(3)
+      end
+    end
+    
+    describe "without asset" do
+      it "should return only components with datasheets when searching for special:without-datasheet" do
+        get :index, query: "special:without-datasheet"
+        expect(json['results']).to_not be_empty
+        expect(json['results'].count).to eq(6)
+      end
+      
+      it "should return only components with documents when searching for special:without-document" do
+        get :index, query: "special:without-document"
+        expect(json['results']).to_not be_empty
+        expect(json['results'].count).to eq(7)
+      end
+
+      it "should return only components with images when searching for special:without-image" do
+        get :index, query: "special:without-image"
+        expect(json['results']).to_not be_empty
+        expect(json['results'].count).to eq(6)
+      end
+
+      it "should return only components with files when searching for special:without-file" do
+        get :index, query: "special:without-file"
+        expect(json['results']).to_not be_empty
+        expect(json['results'].count).to eq(5)
+      end
     end
   end
 end
