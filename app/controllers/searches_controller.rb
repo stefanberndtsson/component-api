@@ -14,11 +14,13 @@ class SearchesController < ApplicationController
       pagination[:page] = @results.current_page
       pagination[:next] = @results.next_page
       pagination[:previous] = @results.previous_page
+      pagination[:per_page] = @results.per_page
     else
       pagination[:pages] = 0
       pagination[:page] = 0
       pagination[:next] = nil
       pagination[:previous] = nil
+      pagination[:per_page] = nil
     end
     metaquery = {}
     metaquery[:query] = params[:query]

@@ -77,6 +77,7 @@ RSpec.describe SearchesController, :type => :controller do
       expect(json['meta']['pagination']['page']).to eq(1)
       expect(json['meta']['pagination']['next']).to eq(2)
       expect(json['meta']['pagination']['previous']).to eq(nil)
+      expect(json['meta']['pagination']['per_page']).to eq(4)
     end
 
     it "should return paginated second page when given page number" do
