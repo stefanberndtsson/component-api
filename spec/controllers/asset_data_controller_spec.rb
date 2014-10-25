@@ -67,5 +67,15 @@ RSpec.describe AssetDataController, :type => :controller do
       image = MiniMagick::Image.read(StringIO.new(response.body))
       expect(image.width).to be <= 320
     end
+    
+    it "should cache thumbnail after generating" do
+      post :create, component_id: @component.id, data_type: "Datasheet", file: @testimg, token: @user.token
+      component = Component.find(@component.id)
+      size = 320
+      name = Pathname.new(@testimg.original_filename).sub_ext(".png")
+      get :thumbnail, id: component.asset_data.first.id, size: size
+      expect(File.exist?("#{@upload_root}/#{component.asset_data.first.thumbnail_dir}/#{size}_#{name}")).to be_truthy
+      get :thumbnail, id: component.asset_data.first.id, size: size
+    end
   end
 end

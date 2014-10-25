@@ -8,4 +8,8 @@ class AssetData < ActiveRecord::Base
     return path if path
     "#{component_id}/#{asset_data_type.dir}"
   end
+  
+  def thumbnail_dir
+    "thumbnail/#{component_id}/#{asset_data_type.dir}"
+  end
 end
