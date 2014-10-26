@@ -181,4 +181,16 @@ RSpec.describe SearchesController, :type => :controller do
       end
     end
   end
+  
+  describe "tags query" do
+    it "should return only tags matching" do
+      get :index, query: "tags:long"
+      expect(json['results'].count).to eq(1)
+    end
+
+    it "should treat everything following the tags query indicator as part of a single tag name" do
+      get :index, query: "tags:long tag name"
+      expect(json['results'].count).to eq(1)
+    end
+  end
 end
