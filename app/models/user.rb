@@ -6,35 +6,33 @@ class User < ActiveRecord::Base
   validates_presence_of :password
   validates_presence_of :name
 
+  has_many :access_tokens
+
   before_save :encrypt_password
   
   def authenticate(provided_password)
     pass = BCrypt::Password.new(self.password)
     if(pass == provided_password)
-      generate_token
-      return true
+      token_object = generate_token
+      return token_object.token
     end
     false
   end
 
   def generate_token
-    update_attributes({
-                        token: SecureRandom.hex,
-                        token_expire: Time.now + DEFAULT_TOKEN_EXPIRE
-                      })
+    access_tokens.create(token: SecureRandom.hex, token_expire: Time.now + DEFAULT_TOKEN_EXPIRE)
   end
   
-  def clear_token
-    update_attributes({ token: nil, token_expire: nil })
+  def clear_expired_tokens
+    access_tokens.where("token_expire < ?", Time.now).destroy_all
   end
   
   def validate_token(provided_token)
-    if self.token_expire < Time.now
-      clear_token
-      return false
-    end
-    update_attribute(:token_expire, Time.now + DEFAULT_TOKEN_EXPIRE)
-    provided_token == self.token
+    clear_expired_tokens
+    token_object = access_tokens.find_by_token(provided_token)
+    return false if !token_object
+    token_object.update_attribute(:token_expire, Time.now + DEFAULT_TOKEN_EXPIRE)
+    true
   end
 
   def as_json(options = {})

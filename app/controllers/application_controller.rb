@@ -6,8 +6,8 @@ class ApplicationController < ActionController::Base
   private
   def validate_token
     token = params[:token]
-    user = User.find_by_token(token)
-    if !user || !user.validate_token(token)
+    token_object = AccessToken.find_by_token(token)
+    if !token_object || !token_object.user.validate_token(token)
       render json: {error: "Invalid token"}, status: 401
     end
   end

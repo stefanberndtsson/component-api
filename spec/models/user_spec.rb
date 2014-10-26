@@ -61,25 +61,25 @@ RSpec.describe User, :type => :model do
   it "should generate token with expire time on authentication" do
     user = User.new(username: "testuser", password: "foobar", name: "Test User")
     user.save
-    expect(user.token).to be_nil
+    expect(user.access_tokens).to be_empty
     expect(user.authenticate("foobar")).to be_truthy
-    expect(user.token).to_not be_nil
-    expect(user.token_expire).to be_within(1.day+2.hours).of(Time.now)
+    expect(user.access_tokens).to_not be_empty
+    expect(user.access_tokens.first.token_expire).to be_within(1.day+2.hours).of(Time.now)
   end
 
   it "should not generate token on failed authentication" do
     user = User.new(username: "testuser", password: "foobar", name: "Test User")
     user.save
-    expect(user.token).to be_nil
+    expect(user.access_tokens).to be_empty
     expect(user.authenticate("wrong")).to be_falsey
-    expect(user.token).to be_nil
+    expect(user.access_tokens).to be_empty
   end
 
   it "should validate token" do
     user = User.new(username: "testuser", password: "foobar", name: "Test User")
     user.save
     expect(user.authenticate("foobar")).to be_truthy
-    token = user.token
+    token = user.access_tokens.first.token
     expect(user.validate_token(token)).to be_truthy
   end
 
@@ -87,13 +87,13 @@ RSpec.describe User, :type => :model do
     user = User.new(username: "testuser", password: "foobar", name: "Test User")
     user.save
     expect(user.authenticate("foobar")).to be_truthy
-    token = user.token
+    token = user.access_tokens.first.token
     expect(user.validate_token(token)).to be_truthy
-    expect(user.token_expire).to be_within(1.day+2.hours).of(Time.now)
-    user.token_expire = Time.now - 1.day
-    expect(user.token_expire).to_not be_within(1.day).of(Time.now)
+    expect(user.access_tokens.first.token_expire).to be_within(1.day+2.hours).of(Time.now)
+    user.access_tokens.first.update_attribute(:token_expire, Time.now - 1.day)
+    expect(user.access_tokens.first.token_expire).to_not be_within(1.day).of(Time.now)
     expect(user.validate_token(token)).to be_falsey
-    expect(user.token).to be_nil
+    expect(user.access_tokens.first).to be_nil
   end
 
 end
