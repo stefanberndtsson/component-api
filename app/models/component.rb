@@ -43,8 +43,8 @@ class Component < ActiveRecord::Base
   end
   
   def self.search(query)
-    return [] if query.blank?
     result = Component.all
+    return result if query.blank?
     if query[/^special:with-(.*)/]
       asset_type = $1
       if asset_type == "file"

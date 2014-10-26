@@ -13,10 +13,10 @@ RSpec.describe SearchesController, :type => :controller do
   end
 
   describe "search data" do
-    it "should return empty list when query missing or empty" do
+    it "should return all items when query missing or empty" do
       get :index
-      expect(json['results']).to be_empty
-      expect(json['results'].count).to eq(0)
+      expect(json['results']).to_not be_empty
+      expect(json['results'].count).to eq(8)
     end
     
     it "should return filtered list when query is provided" do
