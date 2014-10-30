@@ -24,6 +24,7 @@ RSpec.describe AssetDataController, :type => :controller do
     user = User.new(username: "valid_username", password: "valid_password", name: "Valid User")
     user.save
     @user = User.find_by_username("valid_username")
+    @user.clear_expired_tokens
     @user.authenticate("valid_password")
     @token = @user.access_tokens.first.token
   end
