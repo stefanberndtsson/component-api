@@ -7,6 +7,7 @@ RSpec.describe ComponentsController, :type => :controller do
   before :all do
     user = User.new(username: "valid_username", password: "valid_password", name: "Valid User")
     user.save
+    AccessToken.all.destroy_all
     @user = User.find_by_username("valid_username")
     @user.clear_expired_tokens
     @user.authenticate("valid_password")
@@ -57,6 +58,13 @@ RSpec.describe ComponentsController, :type => :controller do
       get :index
       expect(json['components'][0]['name']).to eq("Test component 1")
       expect(json['components'][1]['name']).to eq("Test component 2")
+    end
+
+    it "should extend token expire if token is provided" do
+      pre_expire_time = @user.access_tokens.first.token_expire
+      get :index, token: @token
+      post_expire_time = AccessToken.find_by_token(@token).token_expire
+      expect(pre_expire_time).to_not eq(post_expire_time)
     end
   end
   

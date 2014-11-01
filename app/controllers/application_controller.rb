@@ -2,6 +2,7 @@ class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :null_session
+  before_filter :extend_token_expire
   
   private
   def validate_token
@@ -9,6 +10,15 @@ class ApplicationController < ActionController::Base
     token_object = AccessToken.find_by_token(token)
     if !token_object || !token_object.user.validate_token(token)
       render json: {error: "Invalid token"}, status: 401
+    end
+  end
+
+  def extend_token_expire
+    token = params[:token]
+    return if !token
+    token_object = AccessToken.find_by_token(token)
+    if token_object
+      token_object.user.validate_token(token)
     end
   end
 end
