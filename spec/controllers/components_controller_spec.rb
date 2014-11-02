@@ -4,7 +4,7 @@ RSpec.describe ComponentsController, :type => :controller do
   fixtures :amounts
   fixtures :components
   fixtures :tags
-  before :all do
+  before :each do
     user = User.new(username: "valid_username", password: "valid_password", name: "Valid User")
     user.save
     AccessToken.all.destroy_all
@@ -65,6 +65,15 @@ RSpec.describe ComponentsController, :type => :controller do
       get :index, token: @token
       post_expire_time = AccessToken.find_by_token(@token).token_expire
       expect(pre_expire_time).to_not eq(post_expire_time)
+    end
+
+    it "should add session invalidation notification if token has expired" do
+      get :index, token: @token
+      expect(json['meta']).to_not have_key('notifications')
+      @user.access_tokens.first.update_attribute(:token_expire, Time.now - 1.day)
+      get :index, token: @token
+      expect(json['meta']).to have_key('notifications')
+      expect(json['meta']['notifications']['session_invalid']).to be_truthy
     end
   end
   
