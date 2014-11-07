@@ -62,16 +62,19 @@ RSpec.describe ComponentsController, :type => :controller do
 
     it "should extend token expire if token is provided" do
       pre_expire_time = @user.access_tokens.first.token_expire
-      get :index, token: @token
+      request.headers["Authorization"] = "Token #{@token}"
+      get :index
       post_expire_time = AccessToken.find_by_token(@token).token_expire
       expect(pre_expire_time).to_not eq(post_expire_time)
     end
 
     it "should add session invalidation notification if token has expired" do
-      get :index, token: @token
+      request.headers["Authorization"] = "Token #{@token}"
+      get :index
       expect(json['meta']).to_not have_key('notifications')
       @user.access_tokens.first.update_attribute(:token_expire, Time.now - 1.day)
-      get :index, token: @token
+      request.headers["Authorization"] = "Token #{@token}"
+      get :index
       expect(json['meta']).to have_key('notifications')
       expect(json['meta']['notifications']['session_invalid']).to be_truthy
     end
@@ -158,13 +161,13 @@ RSpec.describe ComponentsController, :type => :controller do
     end
     it "should save a new component" do
       expect(Component.count).to eq(7)
+      request.headers["Authorization"] = "Token #{@token}"
       post :create, { component: {
           name: "New component",
           description: "New component description",
           amount_id: 1,
           spares: false
-        },
-        token: @token
+        }
       }
       expect(json).to have_key('component')
       expect(json['component']['name']).to eq('New component')
@@ -174,13 +177,13 @@ RSpec.describe ComponentsController, :type => :controller do
 
     it "should refuse to save invalid component with 422" do
       expect(Component.count).to eq(7)
+      request.headers["Authorization"] = "Token #{@token}"
       post :create, { component: {
           name: "New component",
           description: "New component description",
           amount_id: 1,
           spares: true
-        },
-        token: @token
+        }
       }
       expect(response.status).to eq(422)
       expect(json).to have_key('errors')
@@ -189,14 +192,14 @@ RSpec.describe ComponentsController, :type => :controller do
     
     it "should accept a list of tags to save with component" do
       expect(Tag.count).to eq(6)
+      request.headers["Authorization"] = "Token #{@token}"
       post :create, { component: {
           name: "New component",
           description: "New component description",
           amount_id: 1,
           spares: false,
           tags: ["tag 1", "Tag 2", "tag 4", "Tag 7"]
-        },
-        token: @token
+        }
       }
       component = Component.find(json['component']['id'])
       expect(component.tags.first.name).to eq('Tag 1')
@@ -219,13 +222,13 @@ RSpec.describe ComponentsController, :type => :controller do
     end
     it "should save an updated component" do
       expect(Component.find(1).name).to eq("Test component 1")
+      request.headers["Authorization"] = "Token #{@token}"
       put :update, { id: 1, component: {
           name: "New component name",
           description: "New component description",
           amount_id: 1,
           spares: false
-        },
-        token: @token
+        }
       }
       expect(json).to have_key('component')
       expect(json['component']['name']).to eq('New component name')
@@ -236,13 +239,13 @@ RSpec.describe ComponentsController, :type => :controller do
 
     it "should refuse to update invalid component with 422" do
       expect(Component.find(1).name).to eq("Test component 1")
+      request.headers["Authorization"] = "Token #{@token}"
       put :update, { id: 1, component: {
           name: "New component name",
           description: "New component description",
           amount_id: 1,
           spares: true
-        },
-        token: @token
+        }
       }
       expect(response.status).to eq(422)
       expect(json).to have_key('errors')
@@ -252,13 +255,13 @@ RSpec.describe ComponentsController, :type => :controller do
 
     it "should return 404 for non-existant component" do
       expect(Component.find(1).name).to eq("Test component 1")
+      request.headers["Authorization"] = "Token #{@token}"
       put :update, { id: 9999999999999999, component: {
           name: "New component name",
           description: "New component description",
           amount_id: 1,
           spares: true
-        },
-        token: @token
+        }
       }
       expect(response.status).to eq(404)
       expect(json).to have_key('meta')
@@ -268,14 +271,14 @@ RSpec.describe ComponentsController, :type => :controller do
     end
 
     it "should accept a list of tags to save with component" do
+      request.headers["Authorization"] = "Token #{@token}"
       put :update, { id: 1, component: {
           name: "New component",
           description: "New component description",
           amount_id: 1,
           spares: false,
           tags: ["tag 1", "Tag 2", "Tag 4"]
-        },
-        token: @token
+        }
       }
       component = Component.find(json['component']['id'])
       expect(component.tags.first.name).to eq('Tag 1')
@@ -283,27 +286,27 @@ RSpec.describe ComponentsController, :type => :controller do
     end
 
     it "should accept a list of tags to save with component, replacing previous list" do
+      request.headers["Authorization"] = "Token #{@token}"
       put :update, { id: 1, component: {
           name: "New component",
           description: "New component description",
           amount_id: 1,
           spares: false,
           tags: ["tag 1", "Tag 2", "Tag 4"]
-        },
-        token: @token
+        }
       }
       component = Component.find(json['component']['id'])
       expect(component.tags.first.name).to eq('Tag 1')
       expect(component.tags.count).to eq(3)
       @json = nil
+      request.headers["Authorization"] = "Token #{@token}"
       put :update, { id: 1, component: {
           name: "New component",
           description: "New component description",
           amount_id: 1,
           spares: false,
           tags: ["tag 2", "Tag 3", "tag 5", "Tag 6"]
-        },
-        token: @token
+        }
       }
       component = Component.find(json['component']['id'])
       expect(component.tags.first.name).to eq('Tag 2')
@@ -312,28 +315,28 @@ RSpec.describe ComponentsController, :type => :controller do
     
     it "should accept a list of tags to save with component, replacing previous list, unless update fails" do
       expect(Tag.count).to eq(6)
+      request.headers["Authorization"] = "Token #{@token}"
       put :update, { id: 1, component: {
           name: "New component",
           description: "New component description",
           amount_id: 1,
           spares: false,
           tags: ["tag 1", "Tag 2", "tag 4", "Tag 7"]
-        },
-        token: @token
+        }
       }
       component = Component.find(json['component']['id'])
       expect(component.tags.first.name).to eq('Tag 1')
       expect(component.tags.count).to eq(4)
       expect(Tag.count).to eq(7)
       @json = nil
+      request.headers["Authorization"] = "Token #{@token}"
       put :update, { id: 1, component: {
           name: "New component",
           description: "New component description",
           amount_id: 1,
           spares: true,
           tags: ["tag 2", "tag 3", "tag 5", "Tag 8", "Tag 9"]
-        },
-        token: @token
+        }
       }
       component = Component.find(1)
       expect(component.tags.first.name).to eq('Tag 1')

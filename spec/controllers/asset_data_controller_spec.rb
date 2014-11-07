@@ -41,7 +41,8 @@ RSpec.describe AssetDataController, :type => :controller do
     end
     
     it "should accept a full upload package" do
-      post :create, component_id: @component.id, data_type: "Datasheet", file: @testpdf, token: @token
+      request.headers["Authorization"] = "Token #{@token}"
+      post :create, component_id: @component.id, data_type: "Datasheet", file: @testpdf
       expect(response.status).to eq(200)
       component = Component.find(1)
       assets = component.asset_data
@@ -53,40 +54,48 @@ RSpec.describe AssetDataController, :type => :controller do
 
   describe "remove asset" do
     it "should require valid token" do
-      post :create, component_id: @component.id, data_type: "Datasheet", file: @testpdf, token: @token
+      request.headers["Authorization"] = "Token #{@token}"
+      post :create, component_id: @component.id, data_type: "Datasheet", file: @testpdf
       component = Component.find(1)
       assets = component.asset_data
+      request.headers["Authorization"] = nil
       delete :destroy, id: assets.first.id
       expect(response.status).to eq(401)
       expect(json['error']).to_not be_nil
     end
 
     it "should remove asset from database" do
-      post :create, component_id: @component.id, data_type: "Datasheet", file: @testpdf, token: @token
+      request.headers["Authorization"] = "Token #{@token}"
+      post :create, component_id: @component.id, data_type: "Datasheet", file: @testpdf
       expect(response.status).to eq(200)
       component = Component.find(1)
       assets = component.asset_data
       expect(assets.count).to eq(1)
-      delete :destroy, id: assets.first.id, token: @token
+      request.headers["Authorization"] = "Token #{@token}"
+      delete :destroy, id: assets.first.id
       component = Component.find(1)
       assets = component.asset_data
       expect(assets.count).to eq(0)
     end
 
     it "should remove asset file from filesystem" do
-      post :create, component_id: @component.id, data_type: "Datasheet", file: @testpdf, token: @token
+      request.headers["Authorization"] = "Token #{@token}"
+      post :create, component_id: @component.id, data_type: "Datasheet", file: @testpdf
       expect(response.status).to eq(200)
       component = Component.find(1)
       assets = component.asset_data
       upload_dir = assets.first.upload_dir
-      delete :destroy, id: assets.first.id, token: @token
+      request.headers["Authorization"] = "Token #{@token}"
+      delete :destroy, id: assets.first.id
       expect(File.exist?("#{@upload_root}/#{upload_dir}/Testfile.pdf")).to be_falsey
     end
 
     it "should remove thumbnail files from filesystem" do
-      post :create, component_id: @component.id, data_type: "Datasheet", file: @testpdf, token: @token
+      request.headers["Authorization"] = "Token #{@token}"
+      post :create, component_id: @component.id, data_type: "Datasheet", file: @testpdf
       expect(response.status).to eq(200)
-      post :create, component_id: @component.id, data_type: "Datasheet", file: @testimg2, token: @token
+      request.headers["Authorization"] = "Token #{@token}"
+      post :create, component_id: @component.id, data_type: "Datasheet", file: @testimg2
       expect(response.status).to eq(200)
       component = Component.find(1)
       assets = component.asset_data
@@ -95,7 +104,8 @@ RSpec.describe AssetDataController, :type => :controller do
       get :thumbnail, id: assets.first.id, size: 160
       get :thumbnail, id: assets.last.id, size: 320
       get :thumbnail, id: assets.last.id, size: 160
-      delete :destroy, id: assets.first.id, token: @token
+      request.headers["Authorization"] = "Token #{@token}"
+      delete :destroy, id: assets.first.id
       expect(File.exist?("#{@upload_root}/#{thumbnail_dir}/320_Testfile.pdf.png")).to be_falsey
       expect(File.exist?("#{@upload_root}/#{thumbnail_dir}/160_Testfile.pdf.png")).to be_falsey
       expect(File.exist?("#{@upload_root}/#{thumbnail_dir}/320_Other.jpg.png")).to be_truthy
@@ -105,7 +115,8 @@ RSpec.describe AssetDataController, :type => :controller do
   
   describe "get asset" do
     it "should return the file when given id" do
-      post :create, component_id: @component.id, data_type: "Datasheet", file: @testpdf, token: @token
+      request.headers["Authorization"] = "Token #{@token}"
+      post :create, component_id: @component.id, data_type: "Datasheet", file: @testpdf
       component = Component.find(@component.id)
       get :show, id: component.asset_data.first.id
       testpdf = fixture_file_upload('files/Testfile.pdf', 'application/pdf')
@@ -116,7 +127,8 @@ RSpec.describe AssetDataController, :type => :controller do
 
   describe "get thumbnail" do
     it "should return thumbnail when given id" do
-      post :create, component_id: @component.id, data_type: "Datasheet", file: @testimg, token: @token
+      request.headers["Authorization"] = "Token #{@token}"
+      post :create, component_id: @component.id, data_type: "Datasheet", file: @testimg
       component = Component.find(@component.id)
       get :thumbnail, id: component.asset_data.first.id, size: 320
       image = MiniMagick::Image.read(StringIO.new(response.body))
@@ -124,7 +136,8 @@ RSpec.describe AssetDataController, :type => :controller do
     end
     
     it "should cache thumbnail after generating" do
-      post :create, component_id: @component.id, data_type: "Datasheet", file: @testimg, token: @token
+      request.headers["Authorization"] = "Token #{@token}"
+      post :create, component_id: @component.id, data_type: "Datasheet", file: @testimg
       component = Component.find(@component.id)
       size = 320
       name = @testimg.original_filename+".png"

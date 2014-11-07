@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
 
   private
   def validate_token
-    token = params[:token]
+    token = get_token
     token_object = AccessToken.find_by_token(token)
     if !token_object || !token_object.user.validate_token(token)
       headers['WWW-Authenticate'] = "Token"
@@ -16,7 +16,7 @@ class ApplicationController < ActionController::Base
   end
 
   def extend_token_expire
-    token = params[:token]
+    token = get_token
     return if !token
     token_object = AccessToken.find_by_token(token)
     if token_object
@@ -36,5 +36,12 @@ class ApplicationController < ActionController::Base
       data['meta']['notifications']['session_invalid'] = true
       response.body = data.to_json
     end
+  end
+
+  def get_token
+    return nil if !request || !request.headers
+    token_response = request.headers['Authorization']
+    return nil if !token_response
+    token_response[/^Token (.*)/,1]
   end
 end
