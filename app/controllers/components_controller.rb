@@ -25,6 +25,8 @@ class ComponentsController < ApplicationController
   end
   
   def create
+    amount = Amount.find_by_name(params[:component][:amount])
+    params[:component][:amount_id] = amount.id
     @component = Component.new(params_permitted)
     if @component.save
       if params[:component][:tags]
@@ -39,6 +41,8 @@ class ComponentsController < ApplicationController
   end
   
   def update
+    amount = Amount.find_by_name(params[:component][:amount])
+    params[:component][:amount_id] = amount.id
     @component = Component.find_by_id(params[:id])
     if @component.nil?
       render json: {meta: { errors: "Component #{params[:id]} not found"}}, status: 404

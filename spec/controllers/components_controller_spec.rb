@@ -87,6 +87,19 @@ RSpec.describe ComponentsController, :type => :controller do
       expect(json['component']['name']).to eq("Test component 1")
     end
 
+    it "should return amount as a string identifier" do
+      get :show, id: 1
+      expect(json).to have_key('component')
+      expect(json['component']['amount']).to eq("One")
+      get :show, id: 2
+      expect(json).to have_key('component')
+      expect(json['component']['amount']).to eq("Some")
+      get :show, id: 5
+      expect(json).to have_key('component')
+      expect(json['component']['amount']).to eq("Fixed")
+      expect(json['component']['amount_value']).to eq(42)
+    end
+
     it "should return 404 for non-existant component" do
       get :show, id: 9999999999999999
       expect(response.status).to eq(404)
@@ -152,7 +165,7 @@ RSpec.describe ComponentsController, :type => :controller do
       post :create, { component: {
           name: "New component",
           description: "New component description",
-          amount_id: 1,
+          amount: "One",
           spares: false
         }
       }
@@ -165,7 +178,7 @@ RSpec.describe ComponentsController, :type => :controller do
       post :create, { component: {
           name: "New component",
           description: "New component description",
-          amount_id: 1,
+          amount: "One",
           spares: false
         }
       }
@@ -173,6 +186,8 @@ RSpec.describe ComponentsController, :type => :controller do
       expect(json['component']['name']).to eq('New component')
       expect(json['component']['id']).to eq(8)
       expect(Component.count).to eq(8)
+      new_component = Component.find(8)
+      expect(new_component.amount.name).to eq("One")
     end
 
     it "should refuse to save invalid component with 422" do
@@ -181,7 +196,7 @@ RSpec.describe ComponentsController, :type => :controller do
       post :create, { component: {
           name: "New component",
           description: "New component description",
-          amount_id: 1,
+          amount: "One",
           spares: true
         }
       }
@@ -196,7 +211,7 @@ RSpec.describe ComponentsController, :type => :controller do
       post :create, { component: {
           name: "New component",
           description: "New component description",
-          amount_id: 1,
+          amount: "One",
           spares: false,
           tags: ["tag 1", "Tag 2", "tag 4", "Tag 7"]
         }
@@ -213,20 +228,21 @@ RSpec.describe ComponentsController, :type => :controller do
       put :update, { id: 1, component: {
           name: "New component name",
           description: "New component description",
-          amount_id: 1,
+          amount: "One",
           spares: false
         }
       }
       expect(response.status).to eq(401)
       expect(json['error']).to_not be_nil
     end
+
     it "should save an updated component" do
       expect(Component.find(1).name).to eq("Test component 1")
       request.headers["Authorization"] = "Token #{@token}"
       put :update, { id: 1, component: {
           name: "New component name",
           description: "New component description",
-          amount_id: 1,
+          amount: "One",
           spares: false
         }
       }
@@ -237,13 +253,31 @@ RSpec.describe ComponentsController, :type => :controller do
       expect(Component.find(1).name).to eq("New component name")
     end
 
+    it "should require amount as string for an updated component" do
+      expect(Component.find(1).name).to eq("Test component 1")
+      request.headers["Authorization"] = "Token #{@token}"
+      put :update, { id: 1, component: {
+          name: "New component name",
+          description: "New component description",
+          amount: "Some",
+          spares: false
+        }
+      }
+      expect(json).to have_key('component')
+      expect(json['component']['name']).to eq('New component name')
+      expect(json['component']['id']).to eq(1)
+      expect(Component.count).to eq(7)
+      expect(Component.find(1).name).to eq("New component name")
+      expect(Component.find(1).amount_id).to eq(3)
+    end
+
     it "should refuse to update invalid component with 422" do
       expect(Component.find(1).name).to eq("Test component 1")
       request.headers["Authorization"] = "Token #{@token}"
       put :update, { id: 1, component: {
           name: "New component name",
           description: "New component description",
-          amount_id: 1,
+          amount: "One",
           spares: true
         }
       }
@@ -259,7 +293,7 @@ RSpec.describe ComponentsController, :type => :controller do
       put :update, { id: 9999999999999999, component: {
           name: "New component name",
           description: "New component description",
-          amount_id: 1,
+          amount: "One",
           spares: true
         }
       }
@@ -275,7 +309,7 @@ RSpec.describe ComponentsController, :type => :controller do
       put :update, { id: 1, component: {
           name: "New component",
           description: "New component description",
-          amount_id: 1,
+          amount: "One",
           spares: false,
           tags: ["tag 1", "Tag 2", "Tag 4"]
         }
@@ -290,7 +324,7 @@ RSpec.describe ComponentsController, :type => :controller do
       put :update, { id: 1, component: {
           name: "New component",
           description: "New component description",
-          amount_id: 1,
+          amount: "One",
           spares: false,
           tags: ["tag 1", "Tag 2", "Tag 4"]
         }
@@ -303,7 +337,7 @@ RSpec.describe ComponentsController, :type => :controller do
       put :update, { id: 1, component: {
           name: "New component",
           description: "New component description",
-          amount_id: 1,
+          amount: "One",
           spares: false,
           tags: ["tag 2", "Tag 3", "tag 5", "Tag 6"]
         }
@@ -319,7 +353,7 @@ RSpec.describe ComponentsController, :type => :controller do
       put :update, { id: 1, component: {
           name: "New component",
           description: "New component description",
-          amount_id: 1,
+          amount: "One",
           spares: false,
           tags: ["tag 1", "Tag 2", "tag 4", "Tag 7"]
         }
@@ -333,7 +367,7 @@ RSpec.describe ComponentsController, :type => :controller do
       put :update, { id: 1, component: {
           name: "New component",
           description: "New component description",
-          amount_id: 1,
+          amount: "One",
           spares: true,
           tags: ["tag 2", "tag 3", "tag 5", "Tag 8", "Tag 9"]
         }

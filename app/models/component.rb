@@ -14,7 +14,8 @@ class Component < ActiveRecord::Base
   def as_json(options = {})
     data = {
       tags: tags.map(&:name).sort_by(&:norm),
-      files: files
+      files: files,
+      amount: amount.name
     }
     super.merge(data)
   end
