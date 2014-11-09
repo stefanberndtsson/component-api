@@ -164,6 +164,7 @@ RSpec.describe ComponentsController, :type => :controller do
     it "should require a valid token" do
       post :create, { component: {
           name: "New component",
+          summary: "New component summary",
           description: "New component description",
           amount: "One",
           spares: false
@@ -177,6 +178,7 @@ RSpec.describe ComponentsController, :type => :controller do
       request.headers["Authorization"] = "Token #{@token}"
       post :create, { component: {
           name: "New component",
+          summary: "New component summary",
           description: "New component description",
           amount: "One",
           spares: false
@@ -195,6 +197,7 @@ RSpec.describe ComponentsController, :type => :controller do
       request.headers["Authorization"] = "Token #{@token}"
       post :create, { component: {
           name: "New component",
+          summary: "New component summary",
           description: "New component description",
           amount: "One",
           spares: true
@@ -210,6 +213,7 @@ RSpec.describe ComponentsController, :type => :controller do
       request.headers["Authorization"] = "Token #{@token}"
       post :create, { component: {
           name: "New component",
+          summary: "New component summary",
           description: "New component description",
           amount: "One",
           spares: false,

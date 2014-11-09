@@ -65,6 +65,6 @@ class ComponentsController < ApplicationController
   
   private
   def params_permitted
-    params.require(:component).permit(:name, :description, :amount_id, :amount_value, :spares)
+    params.require(:component).permit(:name, :summary, :description, :amount_id, :amount_value, :spares)
   end
 end

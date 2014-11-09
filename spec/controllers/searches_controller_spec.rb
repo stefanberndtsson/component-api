@@ -4,6 +4,7 @@ RSpec.describe SearchesController, :type => :controller do
   fixtures :components
   before :each do
     test = Component.create(name: "Component more easily searchable",
+                            summary: "New component summary",
                             description: "Better form of description",
                             amount_id: 1,
                             spares: false)

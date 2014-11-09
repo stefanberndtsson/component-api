@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141026134705) do
+ActiveRecord::Schema.define(version: 20141109135021) do
 
   create_table "access_tokens", force: true do |t|
     t.integer  "user_id"
@@ -62,6 +62,7 @@ ActiveRecord::Schema.define(version: 20141026134705) do
     t.boolean  "spares"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "summary"
   end
 
   create_table "tags", force: true do |t|

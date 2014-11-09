@@ -1,6 +1,7 @@
 one:
     id: 1
     name: "Test component 1"
+    summary: "Test component 1 summary"
     description: "Test component 1 description"
     amount_id: 1
     spares: false
@@ -8,6 +9,7 @@ one:
 two:
     id: 2
     name: "Test component 3"
+    summary: "Test component 3 summary"
     description: "Test component 3 description"
     amount_id: 3
     spares: false
@@ -15,6 +17,7 @@ two:
 three:
     id: 3
     name: "Test component 6"
+    summary: "Test component 6 summary"
     description: "Test component 6 description"
     amount_id: 5
     spares: false
@@ -22,6 +25,7 @@ three:
 four:
     id: 4
     name: "Test component 5"
+    summary: "Test component 5 summary"
     description: "Test component 5 description"
     amount_id: 5
     spares: true
@@ -29,6 +33,7 @@ four:
 five:
     id: 5
     name: "Test component 4"
+    summary: "Test component 4 summary"
     description: "Test component 4 description"
     amount_id: 7
     amount_value: 42
@@ -37,6 +42,7 @@ five:
 six:
     id: 6
     name: "Test component 2"
+    summary: "Test component 2 summary"
     description: "Test component 2 description"
     amount_id: 7
     amount_value: 97
@@ -45,6 +51,7 @@ six:
 seven:
     id: 7
     name: "Test component 7"
+    summary: "Test component 7 summary"
     description: "Test component 7 description"
     amount_id: 7
     amount_value: 107

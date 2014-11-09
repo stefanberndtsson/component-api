@@ -8,6 +8,7 @@ class Component < ActiveRecord::Base
 
   validates_presence_of :name
   validates_presence_of :amount_id
+  validates_presence_of :summary
   validate :spares_allowed
   validate :must_have_amount_value
   

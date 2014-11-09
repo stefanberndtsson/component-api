@@ -14,14 +14,24 @@ RSpec.describe Component, :type => :model do
   
   it "should save a complete component" do
     component = Component.new(name: "Test component",
-                              description: "Text component description",
+                              summary: "Test Component summary",
+                              description: "Test component description",
                               amount_id: @amount[:one].id,
                               spares: false)
     expect(component.save).to be_truthy
   end
   
   it "should require name" do
-    component = Component.new(description: "Text component description",
+    component = Component.new(summary: "Test Component summary",
+                              description: "Test component description",
+                              amount_id: @amount[:one].id,
+                              spares: false)
+    expect(component.save).to be_falsey
+  end
+  
+  it "should require summary" do
+    component = Component.new(name: "Test component",
+                              description: "Test component description",
                               amount_id: @amount[:one].id,
                               spares: false)
     expect(component.save).to be_falsey
@@ -29,19 +39,21 @@ RSpec.describe Component, :type => :model do
   
   it "should require amount setting" do
     component = Component.new(name: "Test component",
-                              description: "Text component description",
+                              description: "Test component description",
                               spares: false)
     expect(component.save).to be_falsey
   end
   
   it "should obey spares rule from amount setting" do
     component = Component.new(name: "Test component",
-                              description: "Text component description",
+                              summary: "Test Component summary",
+                              description: "Test component description",
                               amount_id: @amount[:one].id,
                               spares: true)
     expect(component.save).to be_falsey 
     component = Component.new(name: "Test component",
-                              description: "Text component description",
+                              summary: "Test Component summary",
+                              description: "Test component description",
                               amount_id: @amount[:lots].id,
                               spares: true)
     expect(component.save).to be_truthy
@@ -49,12 +61,14 @@ RSpec.describe Component, :type => :model do
 
   it "should obey value rule from amount setting" do
     component = Component.new(name: "Test component",
-                              description: "Text component description",
+                              summary: "Test Component summary",
+                              description: "Test component description",
                               amount_id: @amount[:fixed].id,
                               spares: false)
     expect(component.save).to be_falsey
     component = Component.new(name: "Test component",
-                              description: "Text component description",
+                              summary: "Test Component summary",
+                              description: "Test component description",
                               amount_id: @amount[:fixed].id,
                               amount_value: 123,
                               spares: false)
