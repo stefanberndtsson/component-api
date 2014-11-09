@@ -4,7 +4,7 @@ RSpec.describe SearchesController, :type => :controller do
   fixtures :components
   before :each do
     test = Component.create(name: "Component more easily searchable",
-                            summary: "New component summary",
+                            summary: "Summary which has a unique word",
                             description: "Better form of description",
                             amount_id: 1,
                             spares: false)
@@ -46,6 +46,12 @@ RSpec.describe SearchesController, :type => :controller do
 
     it "should query description" do
       get :index, query: "better"
+      expect(json['results']).to_not be_empty
+      expect(json['results'].count).to eq(1)
+    end
+
+    it "should query summary" do
+      get :index, query: "unique"
       expect(json['results']).to_not be_empty
       expect(json['results'].count).to eq(1)
     end

@@ -68,10 +68,11 @@ class Component < ActiveRecord::Base
       result.where(id: ComponentTag.where(tag_id: matching_tags).pluck(:component_id))
     else
       name_result = result.where("lower(name) LIKE ?", "%#{query.downcase}%").pluck(:id)
+      summary_result = result.where("lower(summary) LIKE ?", "%#{query.downcase}%").pluck(:id)
       description_result = result.where("lower(description) LIKE ?", "%#{query.downcase}%").pluck(:id)
       matching_tags = Tag.select(:id).where(norm: query.downcase)
       tag_result = ComponentTag.where(tag_id: matching_tags).pluck(:component_id)
-      combined_result = name_result + description_result + tag_result
+      combined_result = name_result + summary_result + description_result + tag_result
       result.where(id: combined_result.uniq)
     end
   end
