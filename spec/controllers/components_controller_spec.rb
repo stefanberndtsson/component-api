@@ -103,8 +103,7 @@ RSpec.describe ComponentsController, :type => :controller do
     it "should return 404 for non-existant component" do
       get :show, id: 9999999999999999
       expect(response.status).to eq(404)
-      expect(json).to have_key('meta')
-      expect(json['meta']).to have_key('errors')
+      expect(json).to have_key('errors')
     end
 
     it "should include an array of tags if present" do

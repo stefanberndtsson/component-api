@@ -18,7 +18,7 @@ class ComponentsController < ApplicationController
   def show
     @component = Component.find_by_id(params[:id])
     if @component.nil?
-      render json: {meta: { errors: "Component #{params[:id]} not found"}}, status: 404
+      render json: {errors: "Component #{params[:id]} not found"}, status: 404
     else
       render json: {component: @component}
     end
