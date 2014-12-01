@@ -45,7 +45,13 @@ class Component < ActiveRecord::Base
   end
   
   def self.search(query)
-    result = Component.all
+    result = Component
+      .includes(:asset_data)
+      .includes(asset_data: :asset_data_type)
+      .includes(:component_tags)
+      .includes(component_tags: :tag)
+      .includes(:tags)
+      .includes(:amount)
     return result if query.blank?
     if query[/^special:with-(.*)/]
       asset_type = $1
@@ -67,9 +73,9 @@ class Component < ActiveRecord::Base
       matching_tags = Tag.select(:id).where(norm: $1.downcase)
       result.where(id: ComponentTag.where(tag_id: matching_tags).pluck(:component_id))
     else
-      name_result = result.where("lower(name) LIKE ?", "%#{query.downcase}%").pluck(:id)
+      name_result = result.where("lower(components.name) LIKE ?", "%#{query.downcase}%").pluck(:id)
       summary_result = result.where("lower(summary) LIKE ?", "%#{query.downcase}%").pluck(:id)
-      description_result = result.where("lower(description) LIKE ?", "%#{query.downcase}%").pluck(:id)
+      description_result = result.where("lower(components.description) LIKE ?", "%#{query.downcase}%").pluck(:id)
       matching_tags = Tag.select(:id).where(norm: query.downcase)
       tag_result = ComponentTag.where(tag_id: matching_tags).pluck(:component_id)
       combined_result = name_result + summary_result + description_result + tag_result
