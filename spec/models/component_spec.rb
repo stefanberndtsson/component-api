@@ -20,30 +20,11 @@ RSpec.describe Component, :type => :model do
                               spares: false)
     expect(component.save).to be_truthy
   end
-  
-  it "should require name" do
-    component = Component.new(summary: "Test Component summary",
-                              description: "Test component description",
-                              amount_id: @amount[:one].id,
-                              spares: false)
-    expect(component.save).to be_falsey
-  end
-  
-  it "should require summary" do
-    component = Component.new(name: "Test component",
-                              description: "Test component description",
-                              amount_id: @amount[:one].id,
-                              spares: false)
-    expect(component.save).to be_falsey
-  end
-  
-  it "should require amount setting" do
-    component = Component.new(name: "Test component",
-                              description: "Test component description",
-                              spares: false)
-    expect(component.save).to be_falsey
-  end
-  
+
+  it { should validate_presence_of :name }
+  it { should validate_presence_of :summary }
+  it { should validate_presence_of :amount_id }
+    
   it "should obey spares rule from amount setting" do
     component = Component.new(name: "Test component",
                               summary: "Test Component summary",

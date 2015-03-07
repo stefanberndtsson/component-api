@@ -6,14 +6,14 @@ RSpec.describe Amount, :type => :model do
                         can_have_spares: false, must_have_value: false)
     expect(amount.save).to be_truthy
   end
-  it "should require name" do
-    amount = Amount.new(description: "Only one left")
-    expect(amount.save).to be_falsey
-  end
+  
+  it { should validate_presence_of :name }
+
   it "should specify if spares are possible" do
     amount = Amount.new(name: "One")
     expect(amount.save).to be_falsey
   end
+
   it "should specify if value is required" do
     amount = Amount.new(name: "One")
     expect(amount.save).to be_falsey

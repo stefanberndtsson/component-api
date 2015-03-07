@@ -43,6 +43,10 @@ group :development, :test do
   gem "mini_magick", "~> 4.0.0.rc"
 end
 
+group :test do
+  gem 'shoulda'
+end
+
 gem 'rack-cors', :require => 'rack/cors'
 gem 'will_paginate'
 gem 'unicode'
