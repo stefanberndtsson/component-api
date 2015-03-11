@@ -1,8 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe SearchesController, :type => :controller do
-  fixtures :components
   before :each do
+    create(:component, name: "Test component 3")
+    create(:component, name: "Test component 2")
+    create(:component, name: "Test component 1")
+    create(:component, name: "Test component 4")
+    create(:component, name: "Test component 5")
+    create(:component, name: "Test component 6")
+    create(:component, name: "Test component 7")
     test = Component.create(name: "Component more easily searchable",
                             summary: "Summary which has a unique word",
                             description: "Better form of description",
@@ -116,6 +122,9 @@ RSpec.describe SearchesController, :type => :controller do
   
   describe "special query" do
     before :each do
+      create(:asset_data_type, name: "Datasheet", dir: "datasheet")
+      create(:asset_data_type, name: "Document", dir: "document")
+      create(:asset_data_type, name: "Image", dir: "image")
       adt = AssetDataType.find_by_name("Datasheet")
       AssetData.create(asset_data_type_id: adt.id,
                        component_id: 1,

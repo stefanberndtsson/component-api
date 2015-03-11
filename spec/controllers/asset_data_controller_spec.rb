@@ -9,10 +9,14 @@ class TestUploadObject < Struct.new(:original_filename, :content_type, :data)
 end
 
 RSpec.describe AssetDataController, :type => :controller do
-  fixtures :components
-  fixtures :asset_data_types
+#  fixtures :components
+#  fixtures :asset_data_types
 
   before :each do
+    create(:asset_data_type, name: "Datasheet", dir: "datasheet")
+    create(:asset_data_type, name: "Document", dir: "document")
+    create(:asset_data_type, name: "Image", dir: "image")
+    create(:component, id: 1, name: "Test Component 1")
     @upload_root = Rails.configuration.upload_root
     FileUtils.mkdir_p(@upload_root)
     

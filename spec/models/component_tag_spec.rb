@@ -1,10 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe ComponentTag, :type => :model do
-  fixtures :components
-  fixtures :tags
-
   before :each do
+    create_list(:tag, 3)
+    create(:component)
     @tag1 = Tag.find(1)
     @tag2 = Tag.find(2)
     @tag3 = Tag.find(3)

@@ -1,10 +1,28 @@
 require 'rails_helper'
 
 RSpec.describe ComponentsController, :type => :controller do
-  fixtures :amounts
-  fixtures :components
-  fixtures :tags
+#  fixtures :amounts
+#  fixtures :components
+#  fixtures :tags
   before :each do
+    create(:asset_data_type, name: "Datasheet", dir: "datasheet")
+    create(:asset_data_type, name: "Document", dir: "document")
+    create(:asset_data_type, name: "Image", dir: "image")
+    create(:tag, id: 1, name: "Tag 1", norm: "tag 1")
+    create(:tag, id: 2, name: "Tag 2", norm: "tag 2")
+    create(:tag, id: 3, name: "Tag 3", norm: "tag 3")
+    create(:tag, id: 4, name: "Tag 4", norm: "tag 4")
+    create(:tag, id: 5, name: "Tag 5", norm: "tag 5")
+    create(:tag, id: 6, name: "Tag 6", norm: "tag 6")
+    create(:component, id: 1, name: "Test component 1", amount: create(:amount, id: 1, name: "One"))
+    create(:component, id: 2, name: "Test component 3", amount: create(:amount, id: 3, name: "Some"))
+    create(:component, id: 3, name: "Test component 6")
+    create(:component, id: 4, name: "Test component 5")
+    create(:component, id: 5, name: "Test component 4",
+           amount: create(:amount, :explicit_count, name: "Fixed"),
+           amount_value: 42)
+    create(:component, id: 6, name: "Test component 2")
+    create(:component, id: 7, name: "Test component 7")
     user = User.new(username: "valid_username", password: "valid_password", name: "Valid User")
     user.save
     AccessToken.all.destroy_all

@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe AssetData, :type => :model do
-  fixtures :components
+#  fixtures :components
   
   before :each do
+    create(:component, id: 1)
     @upload_root = Rails.configuration.upload_root
     @data_type = AssetDataType.create(name: "Test Data Type", dir: "testdir")
     @component = Component.find(1)
