@@ -10,7 +10,12 @@ class User < ActiveRecord::Base
 
   before_save :encrypt_password
   
-  def authenticate(provided_password)
+  def authenticate(provided_password, force_authenticated = false)
+    if force_authenticated
+      token_object = generate_token
+      return token_object.token
+    end
+
     pass = BCrypt::Password.new(self.password)
     if(pass == provided_password)
       token_object = generate_token
